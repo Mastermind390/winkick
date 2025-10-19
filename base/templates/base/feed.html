@@ -1,0 +1,20 @@
+{% extends "base/main.html" %} {% block content %}
+
+<main class="display-matches-container">
+  {% for match in matches %} {% if match.data.start_time > current_time %}
+  <a href="{% url "base:last_matches" match.match_id %}" class="match-display-card">
+    <div class="match-header">
+      <span></span>
+      <span>{{match.data.start_time}}</span>
+    </div>
+    <div class="teams">
+      <span class="home">{{match.data.team.home}}</span>
+      <span class="vs">VS</span>
+      <span class="away">{{match.data.team.away}}</span>
+    </div>
+  </a>
+
+  {% endif %} {% endfor %}
+</main>
+
+{% endblock content %}

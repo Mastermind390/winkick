@@ -1,0 +1,109 @@
+/* Import Google Font */
+@import url("https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap");
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Saira", sans-serif;
+}
+
+/* Body */
+body {
+  background-color: #021526;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  width: 100%;
+  max-width: 600px;
+  background-color: #06223e;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo img {
+  width: 120px;
+}
+
+.signin-btn {
+  background-color: #0078d7;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.signin-btn:hover {
+  background-color: #0095ff;
+}
+
+/* Match cards */
+.display-matches-container {
+  margin-top: 4.5rem;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.match-display-card {
+  background-color: #06223e;
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid #0c3c63;
+  transition: transform 0.2s ease;
+}
+
+.match-display-card:hover {
+  transform: translateY(-3px);
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #a4c3e0;
+  margin-bottom: 0.5rem;
+}
+
+.teams {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.teams .home,
+.teams .away {
+  font-weight: 700;
+  color: #27a3ff;
+}
+
+.teams .vs {
+  color: #a4c3e0;
+}
+
+/* ============== h2h =======================*/
+

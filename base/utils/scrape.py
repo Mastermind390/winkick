@@ -5,7 +5,8 @@ import re, json
 from google import genai
 import os
 from dotenv import load_dotenv
-import ollama
+from ollama import chat
+from ollama import ChatResponse
 from ollama import Client
 
 load_dotenv()
@@ -17,12 +18,7 @@ headers = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
-client = genai.Client()
-
-client = Client(
-    host="https://ollama.com",
-    headers={'Authorization': 'Bearer ' + os.environ.get('OLLAMA_API_KEY')}
-)
+client = Client()
 
 def get_today_matches():
 
@@ -48,7 +44,7 @@ def get_today_matches():
         away_team = element.find('t2').get_text(strip=True)
         start_time = element.get('start-time')
         
-        match_detail['id'] = match_id
+        match_detail['match_id'] = match_id
         match_detail['team'] = {
             'home' : home_team,
             'away' : away_team,
@@ -58,30 +54,43 @@ def get_today_matches():
     return matches
 
 
+def get_league_name(match_id):
+    get_league_name_url = f'https://www.livescore.bz/en/football/event/{match_id}/'
 
-
-def get_both_team_last_matches(match_id):
-    # if not matches:
-    #     print("⚠️ No matches found.")
-    #     return []
-
-    match_url = f"https://www.livescore.bz/en/football/event/{match_id}/"
-    response = requests.get(match_url, headers=headers)
+    response = requests.get(get_league_name_url, headers=headers)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, 'html.parser')
-    match_section = soup.find('div', class_='detay')
-    if not match_section:
+
+    league_name = soup.find('div', class_='detayHeader aic').text
+
+    return league_name
+
+
+
+def get_team_last_matches(match_id, class_name):
+
+    league_name = get_league_name(match_id)
+
+    home_previous_match_url = f"https://www.livescore.bz/last_matches_2018.cache?id={match_id}&filter=overall&team=all&lang=en"
+    
+    home_previous_response = requests.get(home_previous_match_url, headers=headers)
+    home_previous_response.raise_for_status()
+
+    soup = BeautifulSoup(home_previous_response.text, 'html.parser')
+    find_element = soup.find('div', class_ = f'{class_name}')
+    home_team_name = find_element.find('th', class_ = 'lm_h1').find_all('span')[0].text
+    home_team_previous_matches = find_element.find_all('tr', class_=['sm_m sm_sncL', 'sm_m sm_sncW', 'sm_m sm_sncD'])
+
+    if not home_team_previous_matches:
         print("⚠️ No match details found.")
         return []
 
-    h2h_rows = match_section.find_all('tr', class_=['sm_m sm_sncL', 'sm_m sm_sncW', 'sm_m sm_sncD'])
-
-    league_name = soup.find('div', class_='detayHeader aic').text
-    # detayHeader aic
     list_of_match = []
 
-    for row in h2h_rows:
+    all_match_data = {}
+
+    for row in home_team_previous_matches:
         cols = row.find_all('td')
         if len(cols) < 5:
             continue  # Skip malformed rows
@@ -98,9 +107,19 @@ def get_both_team_last_matches(match_id):
             'match_id': match_id,
             'previous_match': match_data
         })
-    return [league_name, list_of_match]
+    all_match_data['match_id'] = match_id
+    all_match_data['home_team_name'] = home_team_name
+    all_match_data['league_name'] = league_name
+    all_match_data['matches'] = list_of_match
+    return all_match_data
 
-# get_both_team_last_matches(2303918)
+home_team_last_matches = get_team_last_matches(2306790,'lm_home')
+away_team_last_matches = get_team_last_matches(2306790,'lm_away')
+
+# print('=============== home team matches ===================')
+# print(home_team_last_matches)
+# print('=============== away team matches ===================')
+# print(away_team_last_matches)
 
 def get_head_to_head(match_id):
 
@@ -141,6 +160,7 @@ def get_team_standings(match_id):
     html = response.text
     
     return html
+
 
 def extract_stdata(html_content):
     """
@@ -296,8 +316,9 @@ def get_clean_todays_matches_data():
         for match in all_matches:
             count += 1
             match_id = match['id']
-            league_name = get_both_team_last_matches(match_id)[0]
-            both_team_last_matches = get_both_team_last_matches(match_id)[1]
+            league_name = get_league_name(match_id)
+            home_team_last_matches = get_team_last_matches(match_id,'lm_home')
+            away_team_last_matches = get_team_last_matches(match_id,'lm_away')
             both_team_head_to_head = get_head_to_head(match_id)
             # html = get_team_standings(match_id)
             league_table = parse_league_table(match_id)
@@ -322,84 +343,85 @@ def get_clean_todays_matches_data():
             matches_data.append({
             'league_name' : league_name,
             'id': match_id,
-            'teams_previous_matches': both_team_last_matches,
+            'home_team_last_matches': home_team_last_matches,
+            'away_team_last_matches': away_team_last_matches,
             'team_head_to_head': both_team_head_to_head,
             'team_standings': league_table["overall"]["tables"][0]["data"]
             })
-            
+            print(f'========== {match_id} finshed getting head-to-head =============')
             # print(count)
             # print(league_name)
+    print('========== finshed getting head-to-head =============')
     return matches_data
 
-        
-# m = get_clean_todays_matches_data()
-# print(m)
 
-def generate_predictions():
+def batch_process(data, batch_size):
+    for i in range(0, len(data), batch_size):
+        yield data[i:i + batch_size]
+
+
+def generate_predictions(batch_size=5):
     matches = get_clean_todays_matches_data()
-    # print(matches)
-    
+    print(f"Total matches found: {len(matches)}")
+
     final_match_data = []
 
-    count = 0
+    if not matches:
+        print("No match data available")
+        return final_match_data
 
-    if matches:
-        for match in matches:
-            count += 1
+    # Process matches in batches
+    for batch_num, match_batch in enumerate(batch_process(matches, batch_size), start=1):
+        print(f"\nProcessing batch {batch_num} ({len(match_batch)} matches)")
+
+        for match in match_batch:
             content = f"""
-                You are a football match prediction assistant.
-                Use this {match} data to predict the likely outcome of the match.
+            You are a football match prediction assistant.
+            Use this {match} data to predict the likely outcome of the match.
 
-                Your prediction should be one of the following formats:
+            Your prediction should be one of the following formats:
 
-                Home win
+            Home win
+            Away win
+            Home win or draw
+            Away win or draw
+            Over or under X goals
 
-                Away win
+            Score your prediction out of 100 
 
-                Home win or draw
+            Share insights explaining the reasoning.
 
-                Away win or draw
+            Your insights should talk about the following topics in detail:
+            - Both teams’ recent matches
+            - Both teams’ recent forms
+            - Both teams’ head-to-head matches
 
-                Over or under X goals
+            Rules:
+            Go straight to the prediction — do NOT start with phrases like “Based on the data” or similar introductions.
+            Respond in plain text only (no Markdown, no bullet formatting).
+            Keep the entire response concise and structured like this:
 
-                Score your prediction out of 100 
-                
-                share an insights explaining the reasoning.
-
-                Your insights should talk on the following topics in details:
-                
-                both team recent matches.
-
-                both team recent forms.
-
-                both team head to head matches
-
-                Rules:
-
-                Go straight to the prediction — do NOT start with phrases like “Based on the data,” “According to the information,” or any similar introduction.
-
-                Respond in plain text only (no Markdown, no bullet formatting).
-
-                Keep the entire response concise and structured like this:
-
-                Prediction: [your prediction]
-                Confidence Score: [score]/100
-                Insights
+            Prediction: [your prediction]
+            Confidence Score: [score]/100
+            Insights:
             """
+
+            # ChatResponse = chat(model='qwen3:1.7b', messages=[
+            #     {'role': 'user', 'content': content}
+            # ])
             messages = [
             {
                 'role': 'user',
                 'content': content,
             },
             ]
-
             response = client.chat('gpt-oss:120b-cloud', messages=messages)
-            match['ai_insight'] =  response.message.content
+            match['ai_insight'] = response['message']['content']
             final_match_data.append(match)
-        print(final_match_data)
-        
-    else:
-        print("no match data")
+            print(match)
+            print(f"✅ Processed match: {match.get('id', 'unknown')}")
 
-generate_predictions()
+    print(f"\nAll batches completed. Total predictions generated: {len(final_match_data)}")
+    return final_match_data
 
+# generate_predictions(batch_size=5)

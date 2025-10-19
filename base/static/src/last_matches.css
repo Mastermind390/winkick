@@ -1,0 +1,84 @@
+/* Match Card */
+.display-matches-container {
+  max-width: 500px;
+  margin: 1.5rem auto;
+  background-color: #00293b;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid #004d67;
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #9ab0b7;
+  margin-bottom: 0.5rem;
+}
+
+.match-body {
+  text-align: center;
+}
+
+.match-body h3 {
+  color: #00b3ff;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem auto;
+  max-width: 600px;
+}
+
+.tab {
+  background-color: #004d75;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.tab.active {
+  background-color: #00b3ff;
+}
+
+/* Game Sections */
+.games-section {
+  max-width: 650px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+}
+
+.games-section h4 {
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.game-card {
+  display: flex;
+  justify-content: space-between;
+  background-color: #00293b;
+  border: 1px solid #004d67;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  gap: 20px;
+}
+
+.game-card span {
+  color: #d0dbe0;
+}
