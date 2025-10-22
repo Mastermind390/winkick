@@ -1,0 +1,31 @@
+.ai-section {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 1.5rem;
+}
+
+.ai-section h3 {
+  margin-bottom: 1rem;
+  color: #b6dfff;
+  font-weight: 600;
+}
+
+.ai-block {
+  margin-bottom: 1.5rem;
+  background-color: #012D41;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #0c3c63;
+}
+
+.ai-block h4 {
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.ai-block p {
+  font-size: 0.85rem;
+  line-height: 1.4rem;
+  color: #c9d9e9;
+}

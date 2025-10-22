@@ -1,0 +1,56 @@
+/* Standings */
+.standings-section h4 {
+  margin-bottom: 10px;
+  color: #ccc;
+}
+
+.table-wrapper {
+  background-color: #012d41;
+  border-radius: 8px;
+  overflow-x: auto;
+  padding: 8px;
+  margin-top: 10px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 30px; /* <-- This creates a 30px gap between header and rows */
+  text-align: left;
+  color: #d1d1d1;
+  font-size: 0.85rem;
+}
+
+thead tr {
+  background-color: transparent;
+}
+
+th,
+td {
+  padding: 8px 10px;
+}
+
+th {
+  color: #4db5ff;
+  font-weight: 600;
+  border-bottom: 1px solid #08445a;
+}
+
+tbody tr {
+  background-color: #00283a;
+  border-radius: 6px;
+}
+
+tbody tr td {
+  border-top: 1px solid #083040;
+  border-bottom: 1px solid #083040;
+}
+
+tbody tr:hover {
+  background-color: #00496a;
+  transition: background-color 0.3s;
+}

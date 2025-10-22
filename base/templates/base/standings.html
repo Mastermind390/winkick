@@ -1,0 +1,64 @@
+{% extends "base/main.html" %} {% block content %}
+
+<section class="display-matches-container">
+  <div class="match-header">
+    <span>{{league_name}}</span>
+    <span>{{start_time}}</span>
+  </div>
+  <div class="match-body">
+    <h3>
+      <span class="team">{{home}}</span> VS
+      <span class="team">{{away}}</span>
+    </h3>
+  </div>
+</section>
+
+<!-- Tabs -->
+{% include "base/back_button.html" %}
+{% include "base/tabs.html" %}
+
+<!-- Last Games -->
+<section class="standings-section">
+    <h4>Standings</h4>
+    <div class="table-wrapper">
+    <table>
+        <thead>
+        <tr>
+            <th>Pos.</th>
+            <th>Team</th>
+            <th>P</th>
+            <th>W</th>
+            <th>D</th>
+            <th>L</th>
+            <th>Pts</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Repeat Rows -->
+        {% for team in standings %}
+        
+          <tr>
+              {% if team.team == home or team.team == away %}
+              <td class='bold_team'>{{team.pos}}</td>
+              <td class='bold_team'>{{team.team}}</td>
+              <td class='bold_team'>{{team.tmp}}</td>
+              <td class='bold_team'>{{team.w}}</td>
+              <td class='bold_team'>{{team.d}}</td>
+              <td class='bold_team'>{{team.l}}</td>
+              <td class='bold_team'>{{team.po}}</td>
+              {% else %}
+              <td>{{team.pos}}</td>
+              <td>{{team.team}}</td>
+              <td>{{team.tmp}}</td>
+              <td>{{team.w}}</td>
+              <td>{{team.d}}</td>
+              <td>{{team.l}}</td>
+              <td>{{team.po}}</td>
+              {% endif %}
+          </tr>
+        
+        {% endfor %}
+    </table>
+</section>
+
+{% endblock content %}

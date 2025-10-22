@@ -1,20 +1,19 @@
 {% extends "base/main.html" %} {% block content %}
-
+{% load time_filters %}
 <main class="display-matches-container">
-  {% for match in matches %} {% if match.data.start_time > current_time %}
-  <a href="{% url "base:last_matches" match.match_id %}" class="match-display-card">
-    <div class="match-header">
-      <span></span>
-      <span>{{match.data.start_time}}</span>
-    </div>
-    <div class="teams">
-      <span class="home">{{match.data.team.home}}</span>
-      <span class="vs">VS</span>
-      <span class="away">{{match.data.team.away}}</span>
-    </div>
-  </a>
-
-  {% endif %} {% endfor %}
+  {% for match in matches %}
+    <a href="{% url "base:last_matches" match.match_id %}" class="match-display-card">
+      <div class="match-header">
+        <span>{{match.data.league_name}}</span>
+        <span>{{match.data.start_time}}</span>
+      </div>
+      <div class="teams">
+        <span class="home">{{match.data.home_team_last_matches.team_name}}</span>
+        <span class="vs">VS</span>
+        <span class="away">{{match.data.away_team_last_matches.team_name}}</span>
+      </div>
+    </a>
+  {% endfor %}
 </main>
 
 {% endblock content %}

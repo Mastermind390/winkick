@@ -14,31 +14,14 @@
 </section>
 
 <!-- Tabs -->
-
-{% include "base/back_button.html" %} {% include "base/tabs.html" %}
+{% include "base/back_button.html" %}
+{% include "base/tabs.html" %}
 
 <!-- Last Games -->
 <section class="games-section">
-  <h4>Home Team Last Games</h4>
+  <!-- <h4>Away Team Last Games</h4> -->
   <div class="games-list">
-    {% for match in home_last_matches %}
-
-    <div class="game-card">
-      <span>{{match.date}}</span>
-      <span>{{match.home}}</span>
-      <span>{{match.score}}</span>
-      <span>{{match.away}}</span>
-      <span>{{match.half_score}}</span>
-    </div>
-
-    {% endfor %}
-  </div>
-</section>
-
-<section class="games-section">
-  <h4>Away Team Last Games</h4>
-  <div class="games-list">
-    {% for match in away_last_matches %}
+    {% for match in head_to_head %}
 
     <div class="game-card">
       <span>{{match.date}}</span>

@@ -5,9 +5,6 @@ import json
 import re
 from dotenv import load_dotenv
 from ollama import Client
-from base.models import MatchData
-from django.utils import timezone
-import datetime
 
 load_dotenv()
 
@@ -56,28 +53,11 @@ async def get_today_matches(session):
         matches.append({
             "match_id": match_id,
             "team": {"home": home_team, "away": away_team},
-            "start_time": start_time,
+            "start-time": start_time,
         })
 
-    # print(f"✅ Found {len(matches)} matches today.")
+    print(f"✅ Found {len(matches)} matches today.")
     return matches
-
-
-async def get_start_time(session, match_id):
-    matches = await get_today_matches(session)
-
-    match_start_time = None
-
-    for match in matches:
-        id = match['match_id']
-        if id == match_id:
-            start_time = int(match['start_time'])
-            time_str = datetime.datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H:%M").split(' ')[1]
-            match_start_time = time_str
-            break
-    return match_start_time
-
-    
 
 
 # ======================================================
@@ -185,8 +165,7 @@ async def process_match(session, match):
     match_id = match["match_id"]
 
     # Run all fetches concurrently for this match
-    start_time, league_name, home_matches, away_matches, h2h, table = await asyncio.gather(
-        get_start_time(session, match_id),
+    league_name, home_matches, away_matches, h2h, table = await asyncio.gather(
         get_league_name(session, match_id),
         get_team_last_matches(session, match_id, "lm_home"),
         get_team_last_matches(session, match_id, "lm_away"),
@@ -196,7 +175,6 @@ async def process_match(session, match):
 
     return {
         "match_id": match_id,
-        'start_time' : start_time,
         "league_name": league_name,
         "home_team_last_matches": home_matches,
         "away_team_last_matches": away_matches,
@@ -230,148 +208,7 @@ def cleaned_match_data():
     for match in matches:
         if not match['team_standings']['overall']['tables']:
             continue
-        
         table = match['team_standings']['overall']['tables'][0]['data']
         match['team_standings'] = table
         cleaned_match_data.append(match)
     return cleaned_match_data
-
-
-def save_match_to_db():
-    matches = cleaned_match_data()
-    db_matches = MatchData.objects.all()
-
-    db_matches.delete()
-
-    for match in matches:
-        id = match['match_id']
-        # start_time = match[]
-        MatchData.objects.create(
-            match_id=match['match_id'],
-            data=match,
-            created_at=datetime.datetime.now()
-        )
-    print('data loaded successfully')
-
-
-
-
-
-
-
-
-
-
-# def batch_process(data, batch_size):
-#     for i in range(0, len(data), batch_size):
-#         yield data[i:i + batch_size]
-
-
-# def generate_predictions(batch_size=5):
-#     matches = get_clean_todays_matches_data()
-#     print(f"Total matches found: {len(matches)}")
-
-#     final_match_data = []
-
-#     if not matches:
-#         print("No match data available")
-#         return final_match_data
-
-#     # Process matches in batches
-#     for batch_num, match_batch in enumerate(batch_process(matches, batch_size), start=1):
-#         print(f"\nProcessing batch {batch_num} ({len(match_batch)} matches)")
-
-#         for match in match_batch:
-#             content = f"""
-#             You are a football match prediction assistant.
-#             Use this {match} data to predict the likely outcome of the match.
-
-#             Your prediction should be one of the following formats:
-
-#             Home win
-#             Away win
-#             Home win or draw
-#             Away win or draw
-#             Over or under X goals
-
-#             Score your prediction out of 100 
-
-#             Share insights explaining the reasoning.
-
-#             Your insights should talk about the following topics in detail:
-#             - Both teams’ recent matches
-#             - Both teams’ recent forms
-#             - Both teams’ head-to-head matches
-
-#             Rules:
-#             Go straight to the prediction — do NOT start with phrases like “Based on the data” or similar introductions.
-#             Respond in plain text only (no Markdown, no bullet formatting).
-#             Keep the entire response concise and structured like this:
-
-#             Prediction: [your prediction]
-#             Confidence Score: [score]/100
-#             Insights:
-#             """
-
-#             # ChatResponse = chat(model='qwen3:1.7b', messages=[
-#             #     {'role': 'user', 'content': content}
-#             # ])
-#             messages = [
-#             {
-#                 'role': 'user',
-#                 'content': content,
-#             },
-#             ]
-#             response = client.chat('gpt-oss:120b-cloud', messages=messages)
-#             match['ai_insight'] = response['message']['content']
-#             final_match_data.append(match)
-#             print(match)
-#             print(f"✅ Processed match: {match.get('id', 'unknown')}")
-
-#     print(f"\nAll batches completed. Total predictions generated: {len(final_match_data)}")
-#     return final_match_data
-
-def generate_prediction(match):
-    content = f"""
-    You are a football match prediction assistant.
-    Use this {match} data to predict the likely outcome of the match.
-
-    Your prediction should be one of the following formats:
-
-    Home win
-    Away win
-    Home win or draw
-    Away win or draw
-    Over or under X goals
-
-    Score your prediction out of 100 
-
-    Share insights explaining the reasoning.
-
-    Your insights should talk about the following topics in detail:
-    - Both teams’ recent matches
-    - Both teams’ recent forms
-    - Both teams’ head-to-head matches
-
-    Rules:
-    Go straight to the prediction — do NOT start with phrases like “Based on the data” or similar introductions.
-    Respond in plain text only (no Markdown, no bullet formatting).
-    Keep the entire response concise and structured like this:
-
-    Prediction: [your prediction]
-    Confidence Score: [score]/100
-    Insights:
-    """
-
-    # ChatResponse = chat(model='qwen3:1.7b', messages=[
-    #     {'role': 'user', 'content': content}
-    # ])
-    messages = [
-    {
-        'role': 'user',
-        'content': content,
-    },
-    ]
-    response = client.chat('gpt-oss:120b-cloud', messages=messages)
-    ai_insight = response['message']['content']
-    return ai_insight

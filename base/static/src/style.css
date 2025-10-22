@@ -105,5 +105,15 @@ body {
   color: #a4c3e0;
 }
 
-/* ============== h2h =======================*/
+.bold_team {
+  font-weight: bold;
+  color: #27a3ff;
+}
 
+.back_button {
+  color: black;
+  text-decoration: none;
+  background-color: orange;
+  padding: 10px;
+  border-radius: 10px;
+}
