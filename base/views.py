@@ -155,29 +155,48 @@ def ai_insight(request, match_id):
     data = game_details.data or {}
     # print(data)
 
+    # test = generate_prediction(data)
+
+    # print(test)
+
     try:
         home_last_matches = data.get('home_team_last_matches')
         away_last_matches = data.get('away_team_last_matches')
-        standings = data.get('team_standings')
         start_time = data.get('start_time')
         league_name = data.get('league_name')
     except Exception as err:
         print(err)
         messages.error('failed to get match data')
     
-    new_standings = []
+    try:
+        ai_insight = data.get('ai_insight')
+        if ai_insight is None:
+            print('AI insight not found in DB, fetching...')
+            ai_insight = generate_prediction(data)
+            data['ai_insight'] = ai_insight
 
-    for s in standings:
-        tmp = int(s['w']) + int(s['d']) + int(s['l'])
-        s['tmp'] = tmp
-        new_standings.append(s)
+            MatchData.objects.update_or_create(
+                match_id=match_id,
+                defaults={
+                    'data': data,
+                    'created_at': game_details.created_at
+                }
+            )
+            print('AI insight saved to DB')
+        else:
+            print('Found ai_insight in DB, skipping Gemini API call.')
 
-    # print(home_last_matches['team_name'].strip())
+    except Exception as e:
+        print(f"Error processing AI insight: {e}")
+
+    print(ai_insight)
+    
     context = {
         'home' : home_last_matches['team_name'].strip(),
         'away' : away_last_matches['team_name'].strip(),
         'start_time': start_time,
         'league_name' : league_name,
         'match_id' : game_details.match_id,
+        'ai_insight' : ai_insight
     }
     return render(request, 'base/ai.html', context)

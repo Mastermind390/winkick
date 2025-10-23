@@ -52,9 +52,9 @@
 
 /* Game Sections */
 .games-section {
-  max-width: 650px;
-  margin: 1.5rem auto;
-  padding: 0 1rem;
+  max-width: 400px;
+  margin: 2rem;
+  padding: 0 2rem;
 }
 
 .games-section h4 {
@@ -76,9 +76,22 @@
   padding: 0.7rem 1rem;
   border-radius: 8px;
   font-size: 0.85rem;
-  gap: 20px;
+  gap: 15px;
 }
 
-.game-card span {
+.game-card p {
   color: #d0dbe0;
+  text-align: left;
+}
+
+.game-card div {
+  width: 100px; /* or adjust as needed */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.score-container {
+  display: flex;
+  justify-content: center;
 }

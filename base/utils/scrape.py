@@ -5,9 +5,12 @@ import json
 import re
 from dotenv import load_dotenv
 from ollama import Client
+from ollama import chat, ChatResponse
 from base.models import MatchData
 from django.utils import timezone
 import datetime
+from google import genai
+
 
 load_dotenv()
 
@@ -21,6 +24,8 @@ HEADERS = {
 }
 
 client = Client()
+client = genai.Client()
+
 
 
 # ======================================================
@@ -336,42 +341,66 @@ def generate_prediction(match):
     You are a football match prediction assistant.
     Use this {match} data to predict the likely outcome of the match.
 
-    Your prediction should be one of the following formats:
+    Your prediction must be in one of these formats:
 
     Home win
+
     Away win
+
     Home win or draw
+
     Away win or draw
+
     Over or under X goals
 
-    Score your prediction out of 100 
+    Assign a confidence score out of 100.
 
-    Share insights explaining the reasoning.
+    Then provide clear, insightful reasoning behind the prediction.
 
-    Your insights should talk about the following topics in detail:
-    - Both teams’ recent matches
-    - Both teams’ recent forms
-    - Both teams’ head-to-head matches
+    Tone & Style Guidelines:
 
-    Rules:
-    Go straight to the prediction — do NOT start with phrases like “Based on the data” or similar introductions.
-    Respond in plain text only (no Markdown, no bullet formatting).
-    Keep the entire response concise and structured like this:
+    Write in a balanced tone — part sports journalist, part data analyst.
 
-    Prediction: [your prediction]
-    Confidence Score: [score]/100
-    Insights:
+    Keep the writing natural, engaging, and factual.
+
+    Avoid robotic phrasing and generic introductions like “Based on the data.”
+
+    Write in plain text only (no markdown, no bullet points).
+
+    Use short clear section headings in uppercase.
+
+    The response should feel like a match preview written by an expert analyst.
+
+    Response Structure Example:
+
+    Prediction: Away win or draw
+    Confidence Score: 75/100
+
+    INSIGHTS:
+    RECENT MATCHES: Watford’s form has been inconsistent, mixing solid wins with disappointing defeats. West Brom, meanwhile, look sharper, recording victories over Preston and Norwich City while holding Leicester to a draw. The visitors appear more composed and confident in recent weeks.
+
+    RECENT FORM: Watford’s tendency to alternate between wins and losses shows a team still searching for rhythm. West Brom have displayed greater stability, balancing attack and defense effectively, which often makes the difference in tight fixtures.
+
+    HEAD-TO-HEAD: Encounters between these sides have historically been close, but West Brom have edged the recent meetings, winning two of the last three. That momentum gives them a psychological advantage heading into this clash.
+
+    SUMMARY: Watford’s home support could play a role, but West Brom’s current consistency and recent dominance suggest they are more likely to avoid defeat. An away win or draw looks the sensible prediction.
+
+    
     """
 
-    # ChatResponse = chat(model='qwen3:1.7b', messages=[
+    response = client.models.generate_content(
+    model="gemini-2.5-flash-lite", contents=content
+    )
+    # response: ChatResponse = chat(model='llama3.2:1b', messages=[
     #     {'role': 'user', 'content': content}
     # ])
-    messages = [
-    {
-        'role': 'user',
-        'content': content,
-    },
-    ]
-    response = client.chat('gpt-oss:120b-cloud', messages=messages)
-    ai_insight = response['message']['content']
+    # messages = [
+    # {
+    #     'role': 'user',
+    #     'content': content,
+    # },
+    # ]
+    # response = client.chat('gpt-oss:120b-cloud', messages=messages)
+    # ai_insight = response['message']['content']
+    ai_insight = response.text
     return ai_insight

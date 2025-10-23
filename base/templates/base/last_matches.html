@@ -22,15 +22,23 @@
   <h4>Home Team Last Games</h4>
   <div class="games-list">
     {% for match in home_last_matches %}
-
     <div class="game-card">
-      <span>{{match.date}}</span>
-      <span>{{match.home}}</span>
-      <span>{{match.score}}</span>
-      <span>{{match.away}}</span>
-      <span>{{match.half_score}}</span>
+      <div>
+        <p>{{match.date}}</p>
+      </div>
+      <div>
+        <p>{{match.home}}</p>
+      </div>
+      <div class="score-container">
+        <p class="score">{{match.score}}</p>
+      </div>
+      <div>
+        <p>{{match.away}}</p>
+      </div>
+      <div class="score-container">
+        <p>{{match.half_score}}</p>
+      </div>
     </div>
-
     {% endfor %}
   </div>
 </section>
@@ -41,11 +49,21 @@
     {% for match in away_last_matches %}
 
     <div class="game-card">
-      <span>{{match.date}}</span>
-      <span>{{match.home}}</span>
-      <span>{{match.score}}</span>
-      <span>{{match.away}}</span>
-      <span>{{match.half_score}}</span>
+      <div>
+        <p>{{match.date}}</p>
+      </div>
+      <div>
+        <p>{{match.home}}</p>
+      </div>
+      <div class="score-container">
+        <p class="score">{{match.score}}</p>
+      </div>
+      <div>
+        <p>{{match.away}}</p>
+      </div>
+      <div class="score-container">
+        <p>{{match.half_score}}</p>
+      </div>
     </div>
 
     {% endfor %}
