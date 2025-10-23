@@ -365,9 +365,7 @@ def generate_prediction(match):
 
     Avoid robotic phrasing and generic introductions like “Based on the data.”
 
-    Write in plain text only (no markdown, no bullet points).
-
-    Use short clear section headings in uppercase.
+    Use short clear section headings in uppercase and bold.
 
     The response should feel like a match preview written by an expert analyst.
 
@@ -398,7 +396,7 @@ def generate_prediction(match):
     # {
     #     'role': 'user',
     #     'content': content,
-    # },
+    # }, Write in plain text only (no markdown, no bullet points).
     # ]
     # response = client.chat('gpt-oss:120b-cloud', messages=messages)
     # ai_insight = response['message']['content']

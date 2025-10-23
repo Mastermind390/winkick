@@ -95,3 +95,8 @@
   display: flex;
   justify-content: center;
 }
+
+.bold-name {
+  color: cyan;
+  font-weight: 700;
+}

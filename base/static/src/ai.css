@@ -12,7 +12,7 @@
 
 .ai-block {
   margin-bottom: 1.5rem;
-  background-color: #012D41;
+  background-color: #012d41;
   padding: 1rem;
   border-radius: 10px;
   border: 1px solid #0c3c63;
@@ -28,4 +28,10 @@
   font-size: 0.85rem;
   line-height: 1.4rem;
   color: #c9d9e9;
+}
+
+.ai-write-up {
+  white-space: pre-line;
+  font-weight: 700;
+  font-size: larger;
 }

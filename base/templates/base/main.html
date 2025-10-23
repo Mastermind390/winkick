@@ -11,6 +11,21 @@
     rel="stylesheet" href="{% static "src/ai.css" %}" />
   </head>
   <body>
-    {% include "base/header.html"%} {% block content %} {% endblock content %}
+    {% include "base/header.html"%}
+    <div class="messages-container">
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li
+          class="message {% if 'error' in message.tags %}error{% elif 'success' in message.tags %}success{% else %}info{% endif %}"
+        >
+          {{ message }}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+    {% block content %} {% endblock content %}
   </body>
 </html>

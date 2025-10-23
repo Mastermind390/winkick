@@ -26,15 +26,27 @@
       <div>
         <p>{{match.date}}</p>
       </div>
+      {% if match.home == home %}
+      <div>
+        <p class="bold-name">{{match.home}}</p>
+      </div>
+      {% else %}
       <div>
         <p>{{match.home}}</p>
       </div>
+      {% endif %}
       <div class="score-container">
         <p class="score">{{match.score}}</p>
       </div>
+      {% if match.away == home %}
+      <div>
+        <p class="bold-name">{{match.away}}</p>
+      </div>
+      {% else %}
       <div>
         <p>{{match.away}}</p>
       </div>
+      {% endif %}
       <div class="score-container">
         <p>{{match.half_score}}</p>
       </div>
@@ -52,15 +64,27 @@
       <div>
         <p>{{match.date}}</p>
       </div>
+      {% if match.home == away %}
+      <div>
+        <p class="bold-name">{{match.home}}</p>
+      </div>
+      {% else %}
       <div>
         <p>{{match.home}}</p>
       </div>
+      {% endif %}
       <div class="score-container">
         <p class="score">{{match.score}}</p>
       </div>
+      {% if match.away == away %}
+      <div>
+        <p class="bold-name">{{match.away}}</p>
+      </div>
+      {% else %}
       <div>
         <p>{{match.away}}</p>
       </div>
+      {% endif %}
       <div class="score-container">
         <p>{{match.half_score}}</p>
       </div>

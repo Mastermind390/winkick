@@ -15,7 +15,6 @@ def feed(request):
     lagos_tz = ZoneInfo("Africa/Lagos")
     now = timezone.now().astimezone(lagos_tz)
     current_time = now.time()
-    print(f"Current time: {current_time}")
 
     matches = MatchData.objects.all()
 
@@ -49,7 +48,8 @@ def feed(request):
     for match in sorted_matches:
         start_dt = parse_start_time(match)
         if start_dt != datetime.datetime.max:
-            print(f"{match.match_id} -> starts at {start_dt.time()}")
+            pass
+            # print(f"{match.match_id} -> starts at {start_dt.time()}")
 
     return render(request, "base/feed.html", {"matches": sorted_matches})
 
@@ -67,10 +67,9 @@ def match_details(request, match_id):
         league_name = data.get('league_name')
     except Exception as err:
         print(err)
-        messages.error('failed to get match data')
-
-    
-
+        messages.error(request, "fail to get data")
+        return render("base:feed")
+        
     context = {
         'home' : home_last_matches['team_name'].strip(),
         'away' : away_last_matches['team_name'].strip(),
@@ -88,7 +87,6 @@ def h2h(request, match_id):
     game_details = MatchData.objects.get(match_id=match_id)
 
     data = game_details.data or {}
-    # print(data)
 
     try:
         home_last_matches = data.get('home_team_last_matches')
@@ -99,8 +97,7 @@ def h2h(request, match_id):
     except Exception as err:
         print(err)
         messages.error('failed to get match data')
-    
-    # print(home_last_matches)
+        return redirect("base:feed")
 
     context = {
         'home' : home_last_matches['team_name'],
@@ -117,7 +114,6 @@ def standings(request, match_id):
     game_details = MatchData.objects.get(match_id=match_id)
 
     data = game_details.data or {}
-    # print(data)
 
     try:
         home_last_matches = data.get('home_team_last_matches')
@@ -128,6 +124,7 @@ def standings(request, match_id):
     except Exception as err:
         print(err)
         messages.error('failed to get match data')
+        return redirect("base:feed")
     
     new_standings = []
 
@@ -136,7 +133,6 @@ def standings(request, match_id):
         s['tmp'] = tmp
         new_standings.append(s)
 
-    # print(home_last_matches['team_name'].strip())
     context = {
         'home' : home_last_matches['team_name'].strip(),
         'away' : away_last_matches['team_name'].strip(),
@@ -153,11 +149,6 @@ def ai_insight(request, match_id):
     game_details = MatchData.objects.get(match_id=match_id)
 
     data = game_details.data or {}
-    # print(data)
-
-    # test = generate_prediction(data)
-
-    # print(test)
 
     try:
         home_last_matches = data.get('home_team_last_matches')
@@ -166,7 +157,8 @@ def ai_insight(request, match_id):
         league_name = data.get('league_name')
     except Exception as err:
         print(err)
-        messages.error('failed to get match data')
+        messages.error(request, 'failed to get data')
+        return redirect("base/feed.html")
     
     try:
         ai_insight = data.get('ai_insight')
@@ -187,9 +179,11 @@ def ai_insight(request, match_id):
             print('Found ai_insight in DB, skipping Gemini API call.')
 
     except Exception as e:
-        print(f"Error processing AI insight: {e}")
+        messages.error(request, 'failed to get match data')
+        print(f"Error getting AI insight: {e}")
+        return redirect('base:feed')
 
-    print(ai_insight)
+    # print(ai_insight)
     
     context = {
         'home' : home_last_matches['team_name'].strip(),

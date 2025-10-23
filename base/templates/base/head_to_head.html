@@ -14,8 +14,7 @@
 </section>
 
 <!-- Tabs -->
-{% include "base/back_button.html" %}
-{% include "base/tabs.html" %}
+{% include "base/back_button.html" %} {% include "base/tabs.html" %}
 
 <!-- Last Games -->
 <section class="games-section">
@@ -24,11 +23,21 @@
     {% for match in head_to_head %}
 
     <div class="game-card">
-      <span>{{match.date}}</span>
-      <span>{{match.home}}</span>
-      <span>{{match.score}}</span>
-      <span>{{match.away}}</span>
-      <span>{{match.half_score}}</span>
+      <div>
+        <p>{{match.date}}</p>
+      </div>
+      <div>
+        <p>{{match.home}}</p>
+      </div>
+      <div class="score-container">
+        <p class="score">{{match.score}}</p>
+      </div>
+      <div>
+        <p>{{match.away}}</p>
+      </div>
+      <div class="score-container">
+        <p>{{match.half_score}}</p>
+      </div>
     </div>
 
     {% endfor %}

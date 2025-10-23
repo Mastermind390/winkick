@@ -117,3 +117,55 @@ body {
   padding: 10px;
   border-radius: 10px;
 }
+
+.messages-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.messages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 400px;
+}
+
+.message {
+  text-align: center;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Success message */
+.message.success {
+  background-color: #16a34a; /* green */
+}
+
+/* Error message */
+.message.error {
+  background-color: #dc2626; /* red */
+}
+
+/* Optional info/default message */
+.message.info {
+  background-color: #6b7280; /* gray */
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
