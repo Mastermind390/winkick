@@ -23,8 +23,10 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
+api_key = os.getenv("GEMINI_API_KEY")
+
 client = Client()
-client = genai.Client()
+client = genai.Client(api_key=api_key)
 
 
 
